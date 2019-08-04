@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple factory pattern</title>
+</head>
+<body>
+<script>
+    const Basketball = function () {
+        this.intro = '篮球'
+    }
+    Basketball.prototype.play = function () {
+        console.log('打篮球')
+    }
+    const Football = function () {
+        this.intro = '足球'
+    }
+    Football.prototype.play = function () {
+        console.log('踢足球')
+    }
+    const Tennis = function () {
+        this.intro = '网球'
+    }
+    Tennis.prototype.play = function () {
+        console.log('打网球')
+    }
+
+    const SportsFactory = function (name) {
+        switch (name) {
+            case 'Lab_B':
+                return new Basketball();
+            case 'Lab_F':
+                return new Football()
+            case 'Lab_T':
+                return new Tennis();
+        } // 可以考虑是否加入 default 怕出现传值错误问题 // 如果用的是 typescript 可以使用类型防止该问题
+    }
+
+    let footnall = SportsFactory('Lab_F'); // 通过某标签 某名称获取到与其对应的新类
+    // 如果想踢足球 就传入 lab_F 标签 获取足球
+    console.log(footnall);
+    footnall.play()
+
+    // 总结下来
+    // 简单工厂模式就是 一个函数 根据传入值的不同,返回与其对应的值;
+    // 也是一种合并重复代码 , 用 if 或 switch 判断不同代码区域 的一个方法
+
+    function SportBallWearingFactory(ballType) {
+        let o = {};
+        o.clothes = 'T恤';
+        o.pants = '短裤';
+
+        switch (ballType) {
+            case 'basketball':
+                o.shoes = '篮球鞋';
+                break;
+            case 'football':
+                o.shoes = '钉鞋';
+                break;
+            case 'tennis':
+                o.shoes = ' 网球鞋';
+                break;
+        }
+        return o
+    }
+
+    const basketballWearing = SportBallWearingFactory('basketball');
+    // 当想去打篮球时  各种球类运动衣服,裤子都是可以这样
+    // 鞋子需要根据类型来区分
+    console.log(basketballWearing)
+
+
+    // 这是工厂模式中最简单的一种
+
+</script>
+</body>
+</html>
