@@ -8,38 +8,38 @@
 <script>
     const Basketball = function () {
         this.intro = '篮球'
-    }
+    };
     Basketball.prototype.play = function () {
         console.log('打篮球')
-    }
+    };
     const Football = function () {
         this.intro = '足球'
-    }
+    };
     Football.prototype.play = function () {
         console.log('踢足球')
-    }
+    };
     const Tennis = function () {
         this.intro = '网球'
-    }
+    };
     Tennis.prototype.play = function () {
         console.log('打网球')
-    }
+    };
 
     const SportsFactory = function (name) {
         switch (name) {
             case 'Lab_B':
                 return new Basketball();
             case 'Lab_F':
-                return new Football()
+                return new Football();
             case 'Lab_T':
                 return new Tennis();
         } // 可以考虑是否加入 default 怕出现传值错误问题 // 如果用的是 typescript 可以使用类型防止该问题
-    }
+    };
 
     let footnall = SportsFactory('Lab_F'); // 通过某标签 某名称获取到与其对应的新类
     // 如果想踢足球 就传入 lab_F 标签 获取足球
     console.log(footnall);
-    footnall.play()
+    footnall.play();
 
     // 总结下来
     // 简单工厂模式就是 一个函数 根据传入值的不同,返回与其对应的值;

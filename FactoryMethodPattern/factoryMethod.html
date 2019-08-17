@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>factoryMethod</title>
+</head>
+<body>
+<script>
+    const Basketball = function () {
+        this.intro = '篮球'
+    };
+    Basketball.prototype.play = function () {
+        console.log('打篮球')
+    };
+    const Football = function () {
+        this.intro = '足球'
+    };
+    Football.prototype.play = function () {
+        console.log('踢足球')
+    };
+    const Tennis = function () {
+        this.intro = '网球'
+    };
+    Tennis.prototype.play = function () {
+        console.log('打网球')
+    };
+
+    const SportsFactory = function (name) {
+        switch (name) {
+            case 'Lab_B':
+                return new Basketball();
+            case 'Lab_F':
+                return new Football();
+            case 'Lab_T':
+                return new Tennis();
+        }
+    };
+
+    // 因为 如果要新增一项运动，比如说乒乓球，那么就需要
+    // 1. 添加乒乓球的构造
+    // 2. 修改 SportsFactory 函数
+    // 每一次运动的添加 都会修改 SportsFactory 函数，很不 方便/优雅 那么有更好的方案来解决
+    // 及工厂方法模式
+
+    const NewSportsFactory = function (type, sayContent) {
+        if (this instanceof NewSportsFactory) {
+            console.warn('run1', this)
+            return new this[type](sayContent);
+        } else {
+            console.warn('run2')
+            return new NewSportsFactory(type, sayContent)
+        }
+        // 如果忘记 加上 new 会做一个判断，返回正确的方法/类
+    };
+
+    NewSportsFactory.prototype = {
+        Basketball: function basket(sayContent) {
+            console.log('打篮球' + sayContent, this)
+            basket.prototype.play = function () {
+                console.log('打篮球,子方法')
+            } // 我个人不推荐这样做
+        },
+        Football: function (sayContent) {
+            console.log('踢足球' + sayContent)
+        },
+        Tennis: function (sayContent) {
+            console.log('打网球' + sayContent)
+        }
+    } // 或者用 for 循环
+
+    const obj = new NewSportsFactory('Basketball', '篮球'); //run1
+
+    const obj2 = NewSportsFactory('Football', '足球') // run2  run1
+
+    console.log(obj.play(), obj2)
+
+</script>
+</body>
+</html>
