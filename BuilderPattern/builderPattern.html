@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Builder Pattern</title>
+</head>
+<body>
+<script>
+    var Human = function (param) {
+        this.skill = param && param.skill || '保密'
+        this.hobby = param && param.hobby || '保密'
+    }
+
+    Human.prototype = {
+        getSkill:function () {
+            return this.skill
+        },
+        getHobby:function () {
+            return this.hobby
+        }
+    }
+
+
+    var Named = function (name) {
+        var that = this;
+
+        (function (name) {
+            that.wholeName = name
+        })(name)
+    }
+
+
+    var Work = function (work) {
+        var that = this;
+
+        (function (work) {
+          switch (work) {
+              case 'code':
+                  that.work = '工程师'
+                  that.workDescript = '每天编程'
+                  break;
+              case 'UI':
+                  that.work = '设计师'
+                  that.workDescript = '这版再改改'
+                  break;
+              default:
+                  that.work = work;
+                  that.workDescript = '不清楚所选择的职位描述'
+          }
+        })(work)
+    }
+
+    Work.prototype = {
+        changeWork:function (work) {
+            this.work = work
+        },
+        changeDescript:function (sentence) {
+            this.workDescript = sentence
+        }
+    }
+
+
+    var Person = function (name, work) {
+        var _person = new Human();
+
+        _person.name =  new Named(name)
+
+        _person.work = new Work(work)
+
+        return _person;
+    }
+    // 将 Person  的创建 拆分为 三部分 1 人（基础类） 2 名字（修饰） 3， 工作类型（修饰）
+    // 1是必须的 2，3 都是再1 上 的修饰类， 所有也可以有4 穿的衣服 5 用的电脑 什么的
+    // 简单的说 是将一个复杂的 类 拆分成多个子的 较细的类
+    // 与工厂模式 只关心结果不同  建造者模式 更关心 过程
+
+    //使用
+
+    var person = new Person('lee nee','code');
+    console.log(person.skill);
+    console.log(person.name);
+    console.log(person.work.work);
+    console.log(person.work.workDescript);
+
+    person.work.changeWork('ui')
+    person.work.changeDescript('这版再改改');
+
+    console.log(person.work.work);
+    console.log(person.work.workDescript);
+</script>
+</body>
+</html>
