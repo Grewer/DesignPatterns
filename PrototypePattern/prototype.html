@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prototype</title>
+</head>
+<body>
+<script>
+    // 录播图的基本类型
+    const LoopImages = function (imgArr, container) {
+        this.imagesArray = imgArr;
+        this.container = container;
+    }
+
+    LoopImages.prototype = {
+        createImage: function () {
+            console.log('LoopImages createImages func')
+        },
+        changeImage: function () {
+            console.log('LoopImages changeImage func')
+        }
+    }
+
+    // 继承 基本类
+    const SlideLoopImg = function (imgArr, container) {
+        LoopImages.call(this, imgArr, container);
+    }
+    SlideLoopImg.prototype = new LoopImages();
+
+    // override
+    SlideLoopImg.prototype.changeImage = function () {
+        console.log('SlideLoopImg changeImage func')
+    }
+
+    // 继承 基本类 并且添加 arrow 属性
+    const FadeLoopImg = function (imgArray, container, arrow) {
+        LoopImages.call(this, imgArray, container);
+        this.arrow = arrow;
+    }
+    FadeLoopImg.prototype = new LoopImages();
+
+    // override
+    FadeLoopImg.prototype.changeImage = function () {
+        console.log('FadeLoopImg changeImage func')
+    }
+
+
+    // init
+    const fadeImg = new FadeLoopImg(['01.jpg', '02.jpg'], 'slide', ['left.jpg', 'right,jpg'])
+
+
+    // test
+    const log = console.log
+    log(fadeImg.container);
+    fadeImg.changeImage();
+
+    // 总结1:
+    // 基本就是一个原型继承模式
+
+    // 原型链的特点/确定
+
+    LoopImages.prototype.getImageLength = function () {
+        return this.imagesArray.length;
+    }
+
+    FadeLoopImg.prototype.getContainer = function () {
+        return this.container;
+    }
+
+    log(fadeImg.getImageLength()) // 2
+    log(fadeImg.getContainer()) // slide
+
+    // 总结2
+    // 原型在任何时候 都能对父类/子类 进行拓展
+    // 所以 这既是一种优点也是一种缺点(对于我个人而言算缺点较多
+
+</script>
+</body>
+</html>
