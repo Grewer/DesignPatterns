@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>abstractFactory</title>
+</head>
+<body>
+<script>
+    const BallFactory = function (subType, superType) {
+        // subType => function
+        // superType => string
+        if (typeof BallFactory[superType] === 'function') {
+            function F() {
+            }
+            F.prototype = new BallFactory[superType]()
+            // 定义一个缓存类， F =>  function(){}  F.prototype = { play:function(){}}
+
+
+            subType.constructor = subType; // subtype => function(){}
+            subType.prototype = new F() // subtype.prototype = { play:function(){}}
+            console.dir(subType)
+            // ƒ oneKindFootBall(people)
+            // constructor: ƒ (people)
+            // length: 1
+            // name: "oneKindFootBall"
+            // prototype:{
+            //      play: ƒ ()
+            // }
+        } else {
+            throw new Error('未创建该抽象类')
+        }
+    };
+
+    BallFactory.footBall = function () {
+        this.type = 'ball';
+    };
+    BallFactory.footBall.prototype = {
+        play: function () {
+            return new Error('抽象方法不能调用')
+        }
+    }
+
+
+    const oneKindFootBall = function (people) {
+        this.people = people;
+    };
+
+    BallFactory(oneKindFootBall, 'footBall'); // 总的来说是 简化抽象类的调用
+
+    // play 是抽象方法 直接一调用就会报错 // 并不是从父类继承的可用方法
+
+    // 抽象类的最大作用 就是在多人协作时的规范
+
+    oneKindFootBall.prototype.play = function () {
+        console.log(this.type, this.people, '踢足球')
+    }
+
+    const Foo = new oneKindFootBall(11);
+    Foo.play()
+</script>
+</body>
+</html>
