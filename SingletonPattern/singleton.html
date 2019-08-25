@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>singleton</title>
+</head>
+<body>
+<script>
+    // 这次是单例模式,但是我想不需要多讲,大家其实都明白,只是不知道这是单例模式
+
+    // 假如有很多方法
+
+    function g(id) {
+        return document.getElementById(id)
+    }
+
+    function css(id, key, value) {
+        return g(id).style[key] = value
+    }
+
+    // etc
+
+    // 但是 不能建立这么多函数 会污染全局环境,所以
+    // 需要新建一个对象
+
+    const utils = {
+        g: function (id) {
+            return document.getElementById(id)
+        },
+        css: function (id, key, value) {
+            return g(id).style[key] = value
+        }
+    }
+
+    // 调用 utils.g('root');
+
+    // 看到这是不是很熟悉,没错,我想说的正是 jQuery
+
+    // 很明显 jQuery 就是一个单例模式, 他将大量的方法都存储再来 $/jQuery 中
+
+    // 所以不需要多讲,都明白这就是单例模式了
+</script>
+</body>
+</html>
