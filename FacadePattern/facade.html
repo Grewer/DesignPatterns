@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> facade</title>
+</head>
+<body>
+<script>
+    // 其实外观模式也不需要多讲
+    // 我给大家看一段函数就明白了
+
+
+    function addEvent(dom, type, fn) {
+        if (dom.addEventListener) {
+            // ie版本 大于9
+            dom.addEventListener(type, fn, false)
+        } else if (dom.attachEvent) {
+            // ie版本 小于9
+            dom.attachEvent('on' + type, fn)
+        } else {
+            // 其他
+            dom['on' + type] = fn
+        }
+    }
+
+    // 很明显  这是一段兼容性代码
+
+    // 这其实就是外观模式(Facade Pattern)
+    // 基本就是 对一个复杂的子系统进行包装,提供一个统一的更高级的接口
+
+    // 其实也不一定是兼容 反正只要是底层的复杂方法就行
+    // 复杂 -> 简单 基本是这样的一个简化过程
+</script>
+</body>
+</html>
