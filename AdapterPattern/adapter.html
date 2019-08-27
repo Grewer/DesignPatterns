@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>adapter</title>
+</head>
+<body>
+<script>
+    // 此例子承接单例模式
+    // SingletonPattern/singleton.html
+
+    // 有一工具库
+
+    var utils = {
+        g: function (id) {
+            return document.getElementById(id)
+        },
+        css: function (id, key, value) {
+            return g(id).style[key] = value
+        }
+    }
+    //但是毕竟工具较少,很多功能缺乏,所以打算 引入 jquery
+    //但是问题来了,
+    // utils 中的代码不是就会是浪费了么 ,去掉的话又要改很多东西
+
+    // 所以 适配器模式来了  他的主页作用是 解决 类(对象) 之间接口不兼容的问题
+
+    var utils = {
+        g: function (id) {
+            return $('#' + id).get(0)
+        },
+        css: function (id, key, value) {
+            return $('#' + id).css(key, value)
+        }
+    }
+    // 这样使得两个库得到了兼容
+
+
+    // 同样的 在数据中 也可以使用 适配器
+
+    // 如一个 数据数据
+
+    let data = ['grewer', 'name', 'a people', 'Feb']
+
+    function arrayToObject(arr) {
+        return {
+            name: arr[0],
+            type: arr[1],
+            desc: arr[2],
+            birthday: arr[3]
+        }
+    }
+
+    let adapterData = arrayToObject(data);
+
+    console.log(adapterData)
+    // {name: "grewer", type: "name", desc: "a people", birthday: "Feb"}
+    // 可以使得数据更加语义化
+
+</script>
+</body>
+</html>
