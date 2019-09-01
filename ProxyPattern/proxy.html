@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>proxy</title>
+</head>
+<body>
+这次是代理模式
+简单的来说就是跨域
+当然如果你是使用 webpack 的是没有这个烦恼的,因为可以使用后端代理(因为后端是没有域这一个东西的
+现在主讲的是在没有后端代理下 如何跨域
+
+一般来说 img 的 src 是可以跨域的 (有黑客通过此方法进行攻击
+
+还有 有名的 JSONP 可以解决 跨域问题
+
+<script>
+    function jsonpCallBack(res, req) {
+        console.log(res, req)
+    }
+</script>
+<script type="text/javascript" src="http://localhost/testjsonp.php?callback=jsonpCallBack&data=getJsonPData"></script>
+
+php 代码
+<!--<?php-->
+<!--    $data = $_GET["data"];-->
+<!--    $callback = $_GET["callback"];-->
+<!--    echo $callback."('success','".$data."')";-->
+<!--?>-->
+可以讲一个函数 发送到后端 在后端执行 参数可以是后端的参数
+
+当然 因为安全的问题 ,需要使用 iframe;
+但是现在是 9102 年了, JSONP 的跨域方式, 了解了原理即可, 因为 99.99% 不会需要写 JSONP
+</body>
+</html>
