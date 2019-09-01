@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>decorator</title>
+</head>
+<body>
+<script>
+    // 如果你一直使用 react 的 class 来写前端 那么 装饰者模式一定是比较熟悉的
+    // 当然后端就不说了 都有装饰者这东西
+
+    // 简单的来说也是   提取公共代码到一个函数
+
+    var telInput = document.getElementById('tel_input');
+
+    var telWarnText = document.getElementById('tel_warn_text');
+
+    var telDemoText = document.getElementById('tel_demo_text');
+
+    telInput.onClick = function () {
+        telWarnText.style.display = 'inline-block';
+        telDemoText.style.display = 'none';
+    }
+    // 在点击输入框时 warn 显示
+    // demo 隐藏
+
+    // 当然一个表单中 有很多很多个 个输入框 那么需要做的就是 提取公共代码
+
+    var decorator = function (inputId, fn) {
+        var input = document.getElementById(inputId);
+        if (typeof input.onclick === 'function') {
+            var oldClickFn = input.onclick;
+            input.onclick = function (ev) {
+                oldClickFn(ev);
+                fn(ev)
+            }
+        } else {
+            input.onclick = fn
+        }
+    }
+    // 提取 fn 的 onclick 监听
+
+    decorator('telInput', function () {
+        var telWarnText = document.getElementById('tel_warn_text');
+        telWarnText.style.display = 'inline-block';
+    });
+
+    decorator('telInput', function () {
+        var telDemoText = document.getElementById('tel_demo_text');
+        telDemoText.style.display = 'none';
+    })
+    // 使用装饰器 即可添加各类点击方法
+
+</script>
+</body>
+</html>
