@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>badge</title>
+</head>
+<body>
+<script>
+    // 桥接模式 基本也是一种 提取公共代码的方法(我感觉和装饰器模式有点像
+    // 基本来说是 分离 事件与业务逻辑 之间的桥梁
+
+    // 比如 一个事件 需要给 span 添加监听,使鼠标移动到它上面时发生变化
+    // 这个时候 就需要分离 监听 与 变化;
+
+    // 原代码:
+    var spans = document.getElementsByTagName('span');
+
+    spans[0].onmouseover = function () {
+        this.style.color = 'red';
+        this.style.background = '#ddd';
+    };
+    spans[1].onmouseover = function () {
+        this.getElementByTagName('strong')[0].style.color = 'red'
+        this.getElementByTagName('strong')[0].style.backgroundColor = '#ddd'
+    };
+
+    // =>转换
+
+    // 桥梁  虽然说是桥梁 但其实 就是提取公共逻辑
+    function changeColor(dom, color, bg) {
+        dom.style.color = color;
+        dom.style.background = bg;
+    }
+
+    spans[0].onmouseover = function () {
+        changeColor(this, 'red', '#ddd')
+    };
+    spans[1].onmouseover = function () {
+        changeColor(this.getElementByTagName('strong')[0], 'red', '#ddd')
+    };
+
+
+</script>
+</body>
+</html>
