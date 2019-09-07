@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>composite</title>
+</head>
+<body>
+<script>
+    // 组合模式该怎么形容
+    // 就行套餐,我们知道这个就大排套餐,就点了
+    // 大排套餐里还有组合 -> 米饭 ,大排 ,菜 ,豆腐 等等
+    // 所以组合模式就是 用各种菜 搭配 组成一个套餐
+
+
+    // 现在以新闻模块为例子
+    // 此方法可以说是一个动作方法
+    // 在制作大排套餐的时候 所有的动作汇总
+    var News = function () {
+        this.children = []
+        this.element = null
+    };
+
+    News.prototype = {
+        // 相当于各种配菜的制作 这是一个 abstract, 因为每一种配菜的制作都是不一样的,比如青菜,炒一下; 米饭是锅子里煮
+        init: function () {
+            throw new Error('请重写你的方法')
+        },
+        // 相当于配菜的添加 把煮好的菜放入盘子里
+        add: function () {
+            throw new Error('请重写你的方法')
+        },
+        // 询问这是什么配菜
+        getElement: function () {
+            throw new Error('请重写你的方法')
+        }
+    }
+
+    // 具体配菜
+
+    // 配菜的原材料
+    var Item = function (classname) {
+        News.call(this);
+        this.classname = classname || '';
+        this.element.classname = this.classname;
+    }
+
+    // 寄生继承的实现方法
+    function createClass(superClass, subClass) {
+        // 子类 prototype 继承 父类 prototype
+        var prototype = Object.create(superClass.prototype)
+        prototype.constructor = subClass
+        subClass.prototype = prototype
+    }
+
+    createClass(News, Item);
+
+    // 具体配菜制作
+    Item.prototype.init = function () {
+        this.element = document.createElement('li');
+        this.element.className = this.classname
+    }
+
+    // 配菜的装盘
+    Item.prototype.add = function (child) {
+        this.children.push(child)
+        this.element.appendChild(child.getElement());
+        return this // 链式操作
+    }
+
+    // 拿起配菜
+    Item.prototype.getElement = function () {
+        return this.element;
+    }
+
+    // 配菜的原材料
+    var Item2 = function (classname) {
+        News.call(this);
+        this.classname = classname || '';
+        this.element.classname = this.classname;
+    }
+
+
+    createClass(News, Item2);
+
+    // 具体配菜制作
+    Item2.prototype.init = function () {
+        this.element = document.createElement('li');
+        this.element.className = this.classname
+    }
+
+    // 配菜的装盘
+    Item2.prototype.add = function (child) {
+        this.children.push(child)
+        this.element.appendChild(child.getElement());
+        return this // 链式操作
+    }
+
+    // 拿起配菜
+    Item2.prototype.getElement = function () {
+        return this.element;
+    }
+
+    var news1 = new Item('news')
+
+    news1.add(
+        new Item2('classname')
+    ).add(
+        new Item2('classname2')
+    )
+
+    // news1 就是一个套餐了
+    // 以上代码还是简化了的 ,想知道详情,还请看 js 设计模式一书
+
+
+</script>
+</body>
+</html>
