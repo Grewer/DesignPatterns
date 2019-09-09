@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>flyWeight</title>
+</head>
+<body>
+<script>
+    // 享元模式
+    // 解决相同结构造成的多余开销问题
+
+    // 以下为新闻模块的分页为例子
+    var FlyWeight = (function () {
+        var created = [];
+
+        function create() {
+            var dom = document.createElement('div');
+            document.getElementById('container').appendChild(dom);
+            created.push(dom);
+            return dom;
+        }
+
+        return {
+            getDiv: function () {
+                if (created.length < 5) {
+                    return create()
+                } else {
+                    var div = created.shift();
+                    created.push(div);
+                    return div;
+                }
+            }
+        }
+    })()
+    // 在 created 数组数小于5 时 分布创建0-4 的 dom 元素
+
+    // 在 大于5 时 分布获取 created 的 0-4 dom 元素,实现了 dom 的重用
+
+
+    var paper = 0,
+        num = 5,
+        len = article.length;
+
+    for (var i = 0; i < 5; i++) {
+        if (article[i]) {
+            FlyWeight.getDiv().innerHTML = article[i]
+        }
+    }
+    // 创建 新闻元素第一页 0-4 元素
+
+
+    document.getElementById('next_page').onclick = function () {
+        if (article.length < 5) {
+            return;
+        }
+        var n = ++paper * num % len,
+            j = 0;
+        for (; j < 5; j++) {
+            if (article[n + j]) {
+                FlyWeight.getDiv().innerHTML = article[n + j];
+            } else if (article[n + j - len]) {
+                FlyWeight.getDiv().innerHTML = article[n + j - len]
+            } else {
+                FlyWeight.getDiv().innerHTML = ''
+            }
+        }
+    }
+
+    // 简单来说 对于 精细的元素 和 比较消耗资源的元素进行重用在 前端 只有 dom 元素可以说是消耗资源的
+
+</script>
+</body>
+</html>
