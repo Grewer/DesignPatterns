@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Observer</title>
+</head>
+<body>
+<script>
+    // 观察者模式是为了解决 多个模块的联系而创建的
+    // 原理->  对某一事件订阅  -> 发布事件 -> 对应订阅事件的 cb
+    // 简单的说 onclick 事件 也可以说是 观察者模式
+    // = 对某一元素添加 onclick 事件  -> 鼠标点击(发布事件) -> onclick 事件的函数run
+
+    var Observer = (function () {
+        var _messages = {};
+        return {
+            regist: function (type, fn) {
+                if (typeof _messages[type] === 'undefined') {
+                    _messages[type] = [fn]
+                } else {
+                    _messages[type].push(fn);
+                }
+            },
+            fire: function (type, args) {
+                if (!_messages[type]) {
+                    return;
+                }
+                var events = {
+                        type: type,
+                        args: args || {}
+                    },
+                    i = 0,
+                    len = _messages[type].length;
+                for (; i < len; i++) {
+                    _messages[type][i].call(this, events)
+                }
+            },
+            remove: function (type, fn) {
+                if (_messages[type] instanceof Array) {
+                    var i = _messages[type].length - 1;
+                    for (; i > 0; i--) {
+                        _messages[type][i] === fn && _messages[type].splice(i, 1)
+                    }
+                }
+            }
+        }
+    })();
+
+
+    // 注册事件
+
+    Observer.regist('test', function (e) {
+        console.log(e.type, e);
+        console.log(this) // this 指向 Observer
+    })
+
+    Observer.fire('test', {msg: '传递的参数'});
+
+
+</script>
+</body>
+</html>
