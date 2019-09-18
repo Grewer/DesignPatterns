@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>State</title>
+</head>
+<body>
+<script>
+    // 当一个函数/事件 需要处理多种分支时使用
+
+    var ResultState = function () {
+        var States = {
+            state0: function () {
+                console.log('第一种情况')
+            },
+            state1: function () {
+                console.log('第二种情况')
+            },
+            state2: function () {
+                console.log('第三种情况')
+            },
+            state3: function () {
+                console.log('第四种情况')
+            }
+        }
+
+        function show(result) {
+            States['state' + result] && States['state' + result]()
+        }
+
+        return {
+            show:show
+        }
+    }()
+
+    ResultState.show(3);
+    // 将条件判断 转换为状态对象的内部状态
+
+    // 是一种 解决臃肿分支判断的方案
+    // 其实和策略模式有点类似,后面会详细分辨
+</script>
+</body>
+</html>
