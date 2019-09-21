@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>strategy</title>
+</head>
+<body>
+<script>
+    // 说起来 策略模式和状态模式很像
+    // 先上代码
+
+    var PriceStrategy = (function () {
+        var strategy = {
+            return30: function (price) {
+                return +price + parseInt(price / 100) * 30;
+            },
+            return50: function (price) {
+                return +price + parseInt(price / 100) * 50;
+            },
+            percent90: function (price) {
+                return price * 100 * 90 / 10000;
+            },
+            percent80: function (price) {
+                return price * 100 * 80 / 10000;
+            },
+            percent50: function (price) {
+                return price * 100 * 50 / 10000;
+            }
+        };
+        return function (algorithm, price) {
+            return strategy[algorithm] && strategy[algorithm](price)
+        }
+    })();
+
+    // 与状态模式 异曲同工
+    // 不同点是 策略模式不需要管理状态,状态间没有依赖关系,
+    // 策略之间可以相互替换,在策略对象内部保存的是相互独立的一些算法
+    // 策略模式的核心是算法
+</script>
+</body>
+</html>
