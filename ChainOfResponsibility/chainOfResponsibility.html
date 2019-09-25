@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> chain of responsibility</title>
+</head>
+<body>
+<script>
+    // 职责链模式 是用来解决请求的发送者和接受者 之间的耦合
+
+    // 请求模块
+    var sendData = function (data, dealType, dom) {
+        var xhr = new XMLHttpRequest(),
+            url = 'xxxx';
+        // 此处封装一个 ajax 请求方法
+        xhr.onload = function (ev) {
+            // Omit
+        }
+        xhr.open('get', url, true);
+        xhr.send(null)
+    };
+
+
+    // ajax 请求成功后 解析数据类型
+    var dealData = function (data, dealType, dom) {
+        var dataType = Object.prototype.toString().call(data);
+        switch (dealType) { // 需要处理的方法
+            case 'sug':
+                if (dataType === '[object Array]') {
+                    return createSug(data, dom)
+                }
+                break;
+            case 'validate':
+                return createValidataResult(dataType, dom)
+                break;
+        }
+    }
+
+
+    var createSug = function (data, dom) {
+        // 提示框显示数据
+    }
+
+    var createValidataResult = function (data, dom) {
+        // 处理数据
+    }
+
+
+    // 其实也是对于复杂模块的分解
+    // 可以减少开发过程中的制约,也能提高开发效率
+</script>
+</body>
+</html>
