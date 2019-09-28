@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>command</title>
+</head>
+<body>
+<script>
+    // 命令模式
+    // 将请求和实现 解耦 并封装成独立对象
+
+    //格式字符串方法
+    function formateString(str, data) {
+        return str.replace(/\{#(\w+)#\}/g, function (match, key) {
+            return typeof data[key] === undefined ? '' : data[key];
+        })
+    }
+
+    var viewCommand = (function () {
+
+        var tpl = {
+                product: ['<div>', '<img src="{#src#}" alt="pic"/>', '</div>'].join(''),
+                title: ['<div>', '<h2>{#title#}</h2>', '</div>'].join('')
+            },
+            html = '';
+
+
+        var Action = {
+            create: function (data, view) {
+                if (data.length) {
+                    for (var i = 0; i < data.length; i++) {
+                        html += formateString(tpl[view], data[i])
+                    }
+                } else {
+                    html += formateString(tpl[view], data)
+                }
+            },
+            display: function (container, data, view) {
+                if (data) {
+                    this.create(data, view)
+                }
+
+                document.getElementById('root').innerHTML = html;
+
+                html = '';
+            }
+        };
+        return function excute(msg) {
+            msg.param = Array.isArray(msg.param) ? msg.param : [mag.param];
+            Action[msg.command].apply(this, msg.param);
+        }
+    })()
+
+
+    viewCommand({
+        command: 'create',
+        param: [{
+            src: 'xx/ss.jpg',
+            text: 'ssss'
+        }, 'product']
+    })
+
+    // 命令模式其实就是对一些操作的封装  每一次执行操作 都要调用一次命令对象
+</script>
+</body>
+</html>
