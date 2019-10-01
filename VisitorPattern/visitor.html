@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>visitor</title>
+</head>
+<body>
+<div id="root">内容</div>
+<script>
+    // 针对 dom ,在不改变该对象的前提下 访问结构中元素的新方法
+
+    function bindEvent(dom, type, fn, data) {
+        var data = data || {};
+        dom.addEventListener('on' + type, function (e) {
+            fn.call(dom, e, data)
+        })
+    }
+
+    var root = document.getElementById('root');
+
+
+    bindEvent(root, 'cus', function (event, data) {
+        console.log(event, data)
+        event.target.innerHTML = '传递数据' + data.q
+    }, {q: 1});
+
+
+    // setTimeout(() => {
+    //     var event = new Event('oncus');
+    //
+    //     root.dispatchEvent(event); //测试 触发自定义方法
+    // }, 1000)
+
+
+    // 在不改变操作对象的同时 为它添加新的操作方法 来实现对操作对象的访问 这就是 访问者模式
+</script>
+</body>
+</html>
