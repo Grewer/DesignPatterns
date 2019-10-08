@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mediator</title>
+</head>
+<body>
+<script>
+    var Mediator = (function () {
+        var _msg = {};
+        return {
+            register: function (type, action) {
+                if (_msg[type]) {
+                    _msg[type].push(action);
+                } else {
+                    _msg[type] = [];
+                    _msg[type].push(action)
+                }
+            },
+            send: function (type) {
+                if (_msg[type]) {
+                    _msg[type].forEach(act => act())
+                }
+            }
+        }
+    })();
+    // 与观察者模式类似 也是解决多模块之间的联系 观察者模式可以删除事件 (不必拘泥于模式名称
+
+</script>
+</body>
+</html>
