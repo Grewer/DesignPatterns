@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>memento</title>
+</head>
+<body>
+<script>
+    var Page = function () {
+        var cache = {};
+
+        return function (page, fn) {
+            if (cache[page]) {// 判断是否有缓存
+                showPage(page, cache[page]) // 使用数据
+            } else {
+                // 省略 ajax 获取数据
+
+                // ajax 回调 使用某些数据
+                showPage(page, data) // 使用数据
+            }
+        }
+    }()
+
+    //说是备忘录模式  其实就是一个缓存对象 比较简单
+</script>
+</body>
+</html>
