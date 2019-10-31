@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DataAccessObject-DAO</title>
+</head>
+<body>
+<script>
+    // 简单的说 就是像后台访问数据库一样的模型
+
+    // 本地存储类
+    var BaseLocalStorage = function (preId, timeSign) {
+        this.preId = preId;
+        this.timeSign = timeSign || '|-|';
+    }
+
+    BaseLocalStorage.prototype = {
+        status: {
+            SUCCESS: 0,
+            FAILURE: 1,
+            OVERFLOW: 3,
+            TIMEOUT: 4
+        },
+        storage: localStorage || window.localStorage,
+        getKey: function (key) {
+            return this.preId + key;
+        },
+        set: function (key, value, cb, time) {
+            // omit
+            var status = this.status.SUCCESS,
+                key = this.getKey(key);
+            try {
+                // 获取时间戳
+                time = new Date(time).getTime() || time.getTime();
+            } catch (e) {
+                //  传入的时间参数有误时 默认一个月
+                time = new Date().getTime() + 1000 * 60 * 60 * 24 * 31
+            }
+
+            try {
+                this.storage.setItem(key, time + this.timeSign + value);
+            } catch (e) {
+                status = this.status.OVERFLOW
+            }
+            cb && cb.call(this, status, key, value)
+        },
+        get: function (key, cb) {
+            var status = this.status.SUCCESS,
+                key = this.getKey(key),
+                value = null,
+                timeSignLen = this.timeSign.length,
+                that = this,
+                index,
+                time,
+                result;
+            try {
+                // 获取字段对应的数据字符串
+                value = that.storage.getItem(key)
+            } catch (e) {
+                result = {
+                    status: that.status.FAILURE,
+                    value: null
+                };
+                cb && cb.call(this, result.status, result.value)
+                return result
+            }
+            // 如果成功取到字符串
+            if (value) {
+                // 获取时间戳与数据之间的拼接符号的位置
+                index = value.indexOf(that.timeSign);
+
+                // 获取时间戳
+                time = +value.slice(0, index);
+
+                // 如果时间未过期
+                if (new Date(time).getTime() > new Date().getTime() || time === 0) {
+                    // 获取数据结果
+                    value = value.slice(index + timeSignLen);
+                } else {
+                    // 过期则结果为 null
+                    value = null;
+                    status = that.status.TIMEOUT;
+
+                    // 删除字段
+                    that.remove(key)
+                }
+            } else {
+                // 未获取字符串传值 为失败
+                status = that.status.FAILURE
+            }
+
+            result = {
+                status: status,
+                value: value
+            }
+
+            cb && cb.call(this, result.status, result.value);
+            return result
+        },
+        remove: function (key, cb) {
+            // 默认为失败
+            var status = this.status.FAILURE,
+                key = this.getKey(key),
+                value = null;
+            try {
+                value = this.storage.getItem(key)
+            } catch (e) {
+
+            }
+            // 如果数据存在
+            if (value) {
+                try {
+                    // 删除
+                    this.storage.removeItem(key);
+                    status = this.status.SUCCESS;
+                } catch (e) {
+
+                }
+            }
+
+    //执行销毁 如果操作成功则返回真是的数据结果 否则为空
+    cb && cb.call(this, status, status > 0 ? null : value.slice(value.indexOf(this.timeSign) + this.timeSign.length))
+
+    }
+    }
+
+
+    var LS = new BaseLocalStorage('LS__');
+
+    LS.set('a', 'xiaoming', function () {
+        console.log(arguments)
+    })
+
+    LS.get('a', function () {
+        console.log(arguments)
+    })
+
+    LS.remove('a', function () {
+        console.log(arguments)
+    })
+
+    LS.remove('a', function () {
+        console.log(arguments)
+    })
+
+    LS.get('a', function () {
+        console.log(arguments)
+    })
+    // todo
+</script>
+</body>
+</html>
