@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <title>throttler</title>
 </head>
+<style>
+    .hidden{
+        opacity: 0;
+    }
+    .show{
+        opacity: 1;
+    }
+</style>
 <body>
+<div id="container" class="hidden" style="width: 100px;height: 100px;background-color: #999">root</div>
 <script>
     // 关于节流的一个汇总吧
 
@@ -43,6 +52,35 @@
     // 这是最简单的节流函数
     // 后面是交互节流 和图片节流
 
+
+    // 交互节流
+    const bindEvent = function (container) {
+
+        function hideLayer() {
+            container.className = 'hidden';
+        }
+
+        function showLayer() {
+            container.className = 'show'
+        }
+
+        container.addEventListener('mouseenter', function () {
+            console.log('mouseenter')
+            throttle(true, hideLayer);
+            throttle(showLayer)
+        }, false)
+        container.addEventListener('mouseleave', function () {
+            console.log('mouseleave')
+            throttle(hideLayer);
+            throttle(true, showLayer)
+        }, false)
+    }
+
+    var container = document.getElementById('container');
+
+    bindEvent(container)
+
+    // 这就是行为上的节流 在确认鼠标停在方块区域 300ms 后才会触发事件(显示方块)
 </script>
 </body>
 </html>
