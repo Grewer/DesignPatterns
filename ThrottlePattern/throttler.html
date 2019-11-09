@@ -5,15 +5,22 @@
     <title>throttler</title>
 </head>
 <style>
-    .hidden{
+    .hidden {
         opacity: 0;
     }
-    .show{
+
+    .show {
         opacity: 1;
     }
 </style>
 <body>
 <div id="container" class="hidden" style="width: 100px;height: 100px;background-color: #999">root</div>
+<dov id="imgsBox">
+    <img data-src="https://grewer.github.io/dataSave/back.jpg">
+    <img data-src="https://grewer.github.io/dataSave/hero.webp">
+    <img data-src="https://grewer.github.io/dataSave/webpack4-result-n.png">
+    <img style="position: absolute;top: 1000px" data-src="https://grewer.github.io/dataSave/table-scroll.gif">
+</dov>
 <script>
     // 关于节流的一个汇总吧
 
@@ -81,6 +88,91 @@
     bindEvent(container)
 
     // 这就是行为上的节流 在确认鼠标停在方块区域 300ms 后才会触发事件(显示方块)
+
+    // 下面是图片节流
+
+    class LazyLoad {
+        constructor(id) {
+            this.container = document.getElementById(id);
+            this.imgs = this.getImgs();
+            this.init()
+        }
+
+        getImgs = () => {
+            let arr = [];
+            const imgs = this.container.getElementsByTagName('img');
+            [...imgs].forEach(img => {
+                arr.push(img)
+            })
+            return arr // 当然还有更加简洁的写法  这里是为了让流程更加清晰
+        }
+
+        update = () => {
+            if (!this.imgs.length) {
+                return;
+            }
+
+            let i = this.imgs.length;
+
+            while (i--) {
+                if (this.shouldShow(i)) {
+                    // data-src 最好扩展成为 props 属性
+                    this.imgs[i].src = this.imgs[i].getAttribute('data-src');
+                    this.imgs.splice(i, 1);
+                }
+            }
+        }
+
+        shouldShow = (i) => {
+            const img = this.imgs[i];
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+
+            const scrollBottom = scrollTop + document.documentElement.clientHeight;
+
+            const imgTop = this.pageY(img);
+
+            const imgBottom = imgTop + img.offsetHeight;
+
+            // 图片是否在可视范围内
+            return imgBottom > scrollTop && imgBottom < scrollBottom || (imgTop > scrollTop && imgTop < scrollBottom);
+
+
+        }
+
+        pageY = (element) => {
+            if (element.offsetParent) {
+                return element.offsetTop + this.pageY(element.offsetParent)
+            } else {
+                return element.offsetTop;
+            }
+            // 后面可以被另一个 api 代替 getBoundingClientRect
+        }
+
+
+        on = (element, type, fn) => {
+            if (element.addEventListener) {
+                element.addEventListener(type, fn, false)
+            } else {
+                element.attachEvent('on' + type, fn, false)
+            }
+        }
+
+        bindEvent = () => {
+            this.on(window, 'resize', () => {
+                throttle(this.update, {context: this})
+            })
+            this.on(window, 'scroll', () => {
+                throttle(this.update, {context: this})
+            })
+        }
+
+        init = () => {
+            this.update();
+            this.bindEvent();
+        }
+    }
+
+    new LazyLoad('imgsBox')
 </script>
 </body>
 </html>
