@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>simpleTemplate</title>
+</head>
+<body>
+<script>
+    // 通过格式化字符串拼凑出视图避免创建视图时大量节点操作.
+    // 优化内存开销
+
+    var A = A || {};
+
+    A.root = document.getElementById('container');
+
+    a.strategy = {
+        'listPart':function () {
+
+        },
+        'codePart':function () {
+
+        },
+        'onlyTitle':function () {
+
+        },
+        'guide':function () {
+
+        }
+    }
+
+    A.init = function (data) {
+        this.strategy[data.type](data)
+    }
+</script>
+</body>
+</html>
