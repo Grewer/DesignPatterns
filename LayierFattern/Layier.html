@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LayierFattern</title>
+</head>
+<body>
+<script>
+    // 减少每次代码执行时的重复性的分支判断,通过对对象重定义来屏蔽原对象中的分支判断
+
+
+    //case
+
+    var A = {};
+    A.on = function (dom, type, fn) {
+        if (document.addEventListener) {
+            dom.addEventListener(type, fn, false)
+        } else if (document.attachEvent) {
+            dom.attachEvent('on' + type, fn)
+        } else {
+            dom['on' + type] = fn
+        }
+    }
+
+    // 只执行一次就可以,但是现在每次执行都会判断
+
+
+    // 解决方案 1
+
+    A.on = function (dom, type, fn) {
+        if (document.addEventListener) {
+            return function (dom, type, fn) {
+                return dom.addEventListener(type, fn, false)
+            }
+        } else if (document.attachEvent) {
+            return function (dom, type, fn) {
+                return dom.attachEvent('on' + type, fn)
+            }
+        } else {
+            return function (dom, type, fn) {
+                return dom['on' + type] = fn
+            }
+        }
+    }()
+    // 页面加载的时候 损耗一定的资源
+
+
+    // 解决方案 2
+    A.on = function (dom, type, fn) {
+        if (document.addEventListener) {
+            A.on = function (dom, type, fn) {
+                return dom.addEventListener(type, fn, false)
+            }
+        } else if (document.attachEvent) {
+            A.on = function (dom, type, fn) {
+                return dom.attachEvent('on' + type, fn)
+            }
+        } else {
+            A.on = function (dom, type, fn) {
+                return dom['on' + type] = fn
+            }
+        }
+    }
+    // 页面加载时不消耗资源,但在第一次引用的时候损耗资源
+
+    // 具体哪种 看需求而定
+
+    // 应用场景, xhr 的判断可以使用此方案
+</script>
+</body>
+</html>
