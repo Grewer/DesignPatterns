@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>participatorPattern</title>
+</head>
+<body>
+<script>
+    // 在特定的作用域中执行给定的函数,并将参数原封不动地传递
+
+    // 元素绑定 bind
+
+    function fn(params) {
+        console.log('params')
+    }
+
+    fn.bind(window, {name: 1})
+
+    // 柯里化
+
+    function curry(fn) {
+        var Slice = [].slice;
+        var args = Slice.call(arguments, 1);
+        return function () {
+            var addArgs = Slice.call(arguments),
+                allArgs = args.concat(addArgs);
+            return fn.apply(null, allArgs)
+        }
+    }
+
+    function add(num1, num2) {
+        return num1 + num2;
+    }
+
+
+    const fn7 = curry(add, 7)
+
+    console.log(fn7(8)) // 15
+
+
+    // 重构 bind
+    function bind(fn, context) {
+        var Slice = [].slice;
+        var args = Slice.call(arguments, 2);
+        return function () {
+            var addArgs = Slice.call(arguments),
+                allArgs = args.concat(addArgs);
+            return fn.apply(context, allArgs)
+        }
+    }
+
+    var demoData1 = {
+            text: '这是一组数据'
+        },
+        demoData2 = {
+            text: '这是第二组数据'
+        };
+
+    // 提供 btn,demoData1 元素
+    // var bindFn = bind(demoFn,btn,demoData1)
+    // log:  [MouseEvent,Object]  <button>按钮</button>
+
+
+    // 常被用于事件,如 setTimeout 回调函数
+
+</script>
+</body>
+</html>
