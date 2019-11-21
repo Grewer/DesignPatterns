@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>waiterPattern</title>
+</head>
+<body>
+<script>
+    // 通过对多个异步进程的监听,来触发未来发生的动作
+
+    // 说起来很简单 就是 Promise.all
+    // 使用方法
+
+    var promise1 = Promise.resolve(3);
+    var promise2 = 42;
+    var promise3 = new Promise(function (resolve, reject) {
+        setTimeout(resolve, 100, 'foo');
+    });
+
+    Promise.all([promise1, promise2, promise3]).then(function (values) {
+        console.log(values);
+    });
+    // expected output: Array [3, 42, "foo"]
+
+    //在任何情况下，Promise.all 返回的 promise 的完成状态的结果都是一个数组，它包含所有的传入迭代参数对象的值（也包括非 promise 值）。
+    //
+    // 失败/拒绝（Rejection）：
+    // 如果传入的 promise 中有一个失败（rejected），Promise.all 异步地将失败的那个结果给失败状态的回调函数，而不管其它 promise 是否完成。
+
+
+    // 另一个 方法
+    // Promise.race()
+
+    var promise1 = new Promise(function(resolve, reject) {
+        setTimeout(resolve, 500, 'one');
+    });
+
+    var promise2 = new Promise(function(resolve, reject) {
+        setTimeout(resolve, 100, 'two');
+    });
+
+    Promise.race([promise1, promise2]).then(function(value) {
+        console.log(value);
+        // Both resolve, but promise2 is faster
+    });
+    // expected output: "two"
+    // race 函数返回一个 Promise，它将与第一个传递的 promise 相同的完成方式被完成。它可以是完成（ resolves），也可以是失败（rejects），这要取决于第一个完成的方式是两个中的哪个。
+
+
+    // Promise.allSettled()
+    // （TC39第4阶段草案）
+    // 与 all 类似 但是 其中一个失败 不会返回error,会返回每个 promise 的状态
+</script>
+</body>
+</html>
