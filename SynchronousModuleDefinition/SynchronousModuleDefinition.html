@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SynchronousModuleDefinition</title>
+</head>
+<body>
+<script>
+    // 就是大家所说的模块式开发
+    // 但是这是同步模块
+
+    // 模块管理器 对象
+    var F = F || {};
+
+    F.define = function (str, fn) {
+        var parts = str.split(','),
+            old = parent = this,
+            i = len = 0;
+        if (parts[0] === 'F'){
+            parts = parts.slice(1);
+        }
+
+        if(parts[0] === 'define' || parts[0] === 'module'){
+            return;
+        }
+
+        for (len = parts.length;i<len;i++){
+            if(typeof parent[parts[i]] === 'undefined'){
+                parent[parts[i]] = {};
+            }
+
+            old = parent;
+            parent = parent[parts[i]]
+        }
+
+        if(fn){
+            old[parts[--i]] = fn()
+        }
+
+        return this;
+
+    }
+
+    F.define('string',function () {
+        return {
+            trim:function (str) {
+                return str.replace(/^\s+|\s+$/g,'')
+            }
+        }
+    })
+
+    // 正常情况下 不会如此调用 F 在正常情况下是在闭包中
+    console.dir(F.string.trim('测试用例 '))
+
+</script>
+</body>
+</html>
