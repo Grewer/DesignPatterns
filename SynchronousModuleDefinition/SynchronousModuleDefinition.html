@@ -5,6 +5,7 @@
     <title>SynchronousModuleDefinition</title>
 </head>
 <body>
+<div id="test">test</div>
 <script>
     // 就是大家所说的模块式开发
     // 但是这是同步模块
@@ -16,16 +17,16 @@
         var parts = str.split(','),
             old = parent = this,
             i = len = 0;
-        if (parts[0] === 'F'){
+        if (parts[0] === 'F') {
             parts = parts.slice(1);
         }
 
-        if(parts[0] === 'define' || parts[0] === 'module'){
+        if (parts[0] === 'define' || parts[0] === 'module') {
             return;
         }
 
-        for (len = parts.length;i<len;i++){
-            if(typeof parent[parts[i]] === 'undefined'){
+        for (len = parts.length; i < len; i++) {
+            if (typeof parent[parts[i]] === 'undefined') {
                 parent[parts[i]] = {};
             }
 
@@ -33,7 +34,7 @@
             parent = parent[parts[i]]
         }
 
-        if(fn){
+        if (fn) {
             old[parts[--i]] = fn()
         }
 
@@ -41,17 +42,86 @@
 
     }
 
-    F.define('string',function () {
+
+    F.define('dom', function () {
+        var $ = function (id) {
+            $.dom = document.getElementById(id)
+            return $
+        }
+        $.html = function (html) {
+            if (html) {
+                this.dom.innerHTML = html;
+                return this;
+            } else {
+                return this.dom.innerHTML
+            }
+        }
+
+        return $
+    })
+
+
+    F.define('string', function () {
         return {
-            trim:function (str) {
-                return str.replace(/^\s+|\s+$/g,'')
+            trim: function (str) {
+                return str.replace(/^\s+|\s+$/g, '')
             }
         }
     })
 
+
+    console.log(F)
     // 正常情况下 不会如此调用 F 在正常情况下是在闭包中
     console.dir(F.string.trim('测试用例 '))
 
+    console.log(F.dom('test').html())
+
+
+    F.module = function () {
+        var args = [].slice.call(arguments),
+            fn = args.pop(),
+            parts = args[0] && args[0] instanceof Array ? args[0] : args,
+            modules = [],
+            modIDs = '',
+            i = 0,
+            iLen = parts.length,
+            parent, j, jLen;
+
+
+        while (i < iLen) {
+            if (typeof parts[i] === 'string') {
+                parent = this;
+                modIDs = parts[i].replace(/^F\./, '').split('.');
+                for (j = 0, jLen = modIDs.length; j < jLen; j++) {
+                    parent = parent[modIDs[j]] || false
+                }
+                modules.push(parent)
+            } else {
+                modules.push(parts[i])
+            }
+            i++
+        }
+
+        fn.apply(null, modules)
+    }
+
+    F.module(['dom', document], function (dom, doc) {
+        console.log(dom, doc)
+        dom('test').html('new add!');
+
+        doc.body.style.background = 'red'
+    })
+
+    // dom 为使用 F.define 中定义的和函数
+    // document 为参数传递
+
+
+
+    // 这样 函数的定义是变成了公共的
+
+    // 各个人可以在各自的模块里开发,使用公共函数
+
+    // 拓展性和维护性大大增强
 </script>
 </body>
 </html>
