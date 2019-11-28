@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>asynchronousModuleDefinition</title>
+</head>
+<body>
+<script>
+    // 这次是在闭包环境下创建 F
+    ~(function (F) {
+        var moduleCache = {},
+            setModule = function (moduleName, params, callback) {},
+            loadModule = function (moduleName, callback) {
+                var _module;
+                if(moduleCache[moduleName]){
+                    _module = moduleCache[moduleName];
+                    if(_module.status === 'loaded'){
+                        setTimeout(callback(_module.exports),0)
+                    }else {
+                        _module.onload.push(callback)
+                    }
+                }else{
+                    moduleCache[moduleName] = {
+                        moduleName,
+                        status:'loading',
+                        exports:null,
+                        onload:[callback]
+                    };
+                    loadModule(getUrl(moduleName))
+                }
+            }
+    })((function () {
+        return window.F = {}
+    })());
+
+    F.module = function () {
+        var args = [].slice.call(arguments),
+            callback = args.pop(),
+            deps = (args.length && args[args.length - 1] instanceof Array) ? args.pop() : [],
+            url = args.length ? args.pop() : null,
+            params = [],
+            depsCount = 0,
+            i = 0,
+            len;
+
+        if (len = deps.length) {
+            while (i < len) {
+                (function (i) {
+                    depsCount++;
+                    loadModule(deps[i], function (mod) {
+                        params[i] = mod;
+                        depsCount--;
+                        if (depsCount === 0) {
+                            setModule(url, params, callback)
+                        }
+                    })
+                })(i);
+                i++;
+            }
+        } else {
+            setModule(url, [], callback)
+        }
+    }
+
+
+    console.log(F)
+</script>
+</body>
+</html>
