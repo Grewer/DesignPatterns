@@ -4,66 +4,104 @@
     <meta charset="UTF-8">
     <title>asynchronousModuleDefinition</title>
 </head>
+<div id="demo">ne</div>
 <body>
 <script>
     // 这次是在闭包环境下创建 F
     ~(function (F) {
         var moduleCache = {},
-            setModule = function (moduleName, params, callback) {},
+            setModule = function (moduleName, params, callback) {
+                var _module, fn;
+                if (moduleCache[moduleName]) {
+                    _module = moduleCache[moduleName];
+                    _module.status = 'loaded';
+                    _module.exports = callback ? callback.apply(_module, params) : null;
+                    while (fn = _module.onload.shift()) {
+                        fn(_module.exports)
+                    }
+                } else {
+                    callback && callback.apply(null, params)
+                }
+            },
             loadModule = function (moduleName, callback) {
                 var _module;
-                if(moduleCache[moduleName]){
+                if (moduleCache[moduleName]) {
                     _module = moduleCache[moduleName];
-                    if(_module.status === 'loaded'){
-                        setTimeout(callback(_module.exports),0)
-                    }else {
+                    if (_module.status === 'loaded') {
+                        setTimeout(callback(_module.exports), 0)
+                    } else {
                         _module.onload.push(callback)
                     }
-                }else{
+                } else {
                     moduleCache[moduleName] = {
                         moduleName,
-                        status:'loading',
-                        exports:null,
-                        onload:[callback]
+                        status: 'loading',
+                        exports: null,
+                        onload: [callback]
                     };
-                    loadModule(getUrl(moduleName))
+                    console.log('loading script')
+                    loadScript(getUrl(moduleName))
                 }
+            },
+            getUrl = function (moduleName) {
+                return String(moduleName).replace(/\.js$/g, '') + '.js';
+            },
+            loadScript = function (src) {
+                var _script = document.createElement('script');
+                _script.type = 'text/JavaScript';
+                _script.charset = 'UTF-8';
+                _script.async = true;
+                _script.src = src;
+                document.getElementsByTagName('head')[0].appendChild(_script)
             }
+
+        F.module = function () {
+            var args = [].slice.call(arguments),
+                callback = args.pop(),
+                deps = (args.length && args[args.length - 1] instanceof Array) ? args.pop() : [],
+                url = args.length ? args.pop() : null,
+                params = [],
+                depsCount = 0,
+                i = 0,
+                len;
+
+            if (len = deps.length) {
+                while (i < len) {
+                    (function (i) {
+                        depsCount++;
+                        loadModule(deps[i], function (mod) {
+                            params[i] = mod;
+                            depsCount--;
+                            if (depsCount === 0) {
+                                setModule(url, params, callback)
+                            }
+                        })
+                    })(i);
+                    i++;
+                }
+            } else {
+                setModule(url, [], callback)
+            }
+        }
     })((function () {
         return window.F = {}
     })());
 
-    F.module = function () {
-        var args = [].slice.call(arguments),
-            callback = args.pop(),
-            deps = (args.length && args[args.length - 1] instanceof Array) ? args.pop() : [],
-            url = args.length ? args.pop() : null,
-            params = [],
-            depsCount = 0,
-            i = 0,
-            len;
-
-        if (len = deps.length) {
-            while (i < len) {
-                (function (i) {
-                    depsCount++;
-                    loadModule(deps[i], function (mod) {
-                        params[i] = mod;
-                        depsCount--;
-                        if (depsCount === 0) {
-                            setModule(url, params, callback)
-                        }
-                    })
-                })(i);
-                i++;
-            }
-        } else {
-            setModule(url, [], callback)
-        }
-    }
-
-
     console.log(F)
+
+    F.module(['lib/event', 'lib/dom'], function (events, dom) {
+        events.on('demo', 'click', function () {
+            dom.html('demo', 'success')
+        })
+    })
+
+    F.module(['lib/dom'], function (dom) {
+        console.log(dom.html('demo'))
+    })
+
+    // 步骤 F.module  数组里面 就是依赖
+    // 若有依赖 则循环依赖 加载依赖 (依赖会缓存,若有缓存则从缓存里面取出)
+    // 取出后加载 F.module 里面 的最后一个参数 即回调函数
 </script>
 </body>
 </html>
