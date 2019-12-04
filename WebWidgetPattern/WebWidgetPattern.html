@@ -57,11 +57,27 @@
             },
             // 编译执行
             _compileTpl = function (str) {
-                var fnBody = "var template_array = [];\n var fn = (function(data{\n var))"
+                var fnBody = "var template_array = [];\n" +
+                    "var fn = (function(data{\n" +
+                    "var template_key=''; \n" +
+                    "for(key in data) { \n" +
+                    " template_key += ('var '+key+'=data[\"'+key+'\"];');\n" +
+                    "} \n " +
+                    "eval (template_key); \n " +
+                    "template_array.push('" + _dealTpl(str) + "');\n " +
+                    "template_key = null;\n " +
+                    "})(templateData); \n " +
+                    "fn = null; \n " +
+                    "return template_array.join('');";
+
+                return new Function("templateData", fnBody)
             };
 
         return _TplEngine();
     })
+
+    // 算是一种比较老的方法了吧
+    // 现在的前端基本不会碰到
 </script>
 </body>
 </html>
