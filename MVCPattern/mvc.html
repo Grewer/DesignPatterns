@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // MVC 模式 虽然古老了一点 但是也要理解其中的含义
+    $(function () {
+        var MVC = MVC || {}
+        // 数据模型层
+        MVC.model = function () {
+            var M = {};
+            M.data = {} // 服务器中获取的数据
+            M.conf = {} // 配置数据,页面加载时提供
+
+            return {
+                getData: function (m) {
+                    return M.data[m]
+                },
+                getConf: function (c) {
+                    return M.conf[c]
+                },
+                setData: function (m, v) {
+                    M.data[m] = v
+                    return this
+                },
+                setConf: function (c, v) {
+                    M.conf[c] = v
+                    return this
+                }
+            }
+        }
+        MVC.view = function () {
+            var M = MVC.model;
+            var V = {}
+            return function (v) {
+                V[v](0)
+            }
+        }()
+
+        MVC.ctrl = function () {
+            var M = MVC.model;
+            var V = MVC.view
+            var C = {}
+        }()
+    })
+</script>
+</body>
+</html>
