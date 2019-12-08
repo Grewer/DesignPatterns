@@ -12,8 +12,32 @@
         // 数据模型层
         MVC.model = function () {
             var M = {};
-            M.data = {} // 服务器中获取的数据
-            M.conf = {} // 配置数据,页面加载时提供
+            M.data = {
+                slideBar: [
+                    {
+                        text: 'm',
+                        icon: 'left meng.png',
+                        title: 'm title',
+                        content: 'm content',
+                        img: 'left_meng_img.png',
+                        href: 'www.xxx.com'
+                    },
+                    {
+                        text: 'd',
+                        icon: 'left c.png',
+                        title: 'd title',
+                        content: 'd content',
+                        img: 'left_d_img.png',
+                        href: 'www.xxxdd.com'
+                    }
+                ],
+                newsMod:[
+                    // ...
+                ]
+            } // 服务器中获取的数据
+            M.conf = {
+                slideBarCloseAnimate: false
+            } // 配置数据,页面加载时提供
 
             return {
                 getData: function (m) {
@@ -34,16 +58,76 @@
         }
         MVC.view = function () {
             var M = MVC.model;
-            var V = {}
+            var V = {
+                createSlideBar: function () {
+                    var html = '',
+                        data = M.getData('slideBar');
+                    if (!data || !data.length) {
+                        return;
+                    }
+
+                    var dom = $.create('div', {
+                        class: 'slidebar',
+                        id: 'slidebar'
+                    })
+
+                    var tpl = {
+                        container: [
+                            '<div class="slidebar-inner"><ul>{#content#}</ul></div>',
+                            '<a hidefocus href="#" class="slidebar-close" title="收起"/>'
+                        ].join(''),
+                        item: [
+                            '<li>',
+                            '<a class="icon" href="{#href#}">',
+                            '<img src="common/img/{#icon#}"/>',
+                            '<span>{#text#}</span>',
+                            '</a>',
+                            '<div class="box">',
+                            '<div>',
+                            '<a class="title" href="{#href#}">{#title#}</a>',
+                            '<a href="{#href#}">{#content#}</a>',
+                            '</div>',
+                            '<a class="image" href="{#href#}"><img src="common/img/{#img#}"/></a>',
+                            '</div>',
+                            '</li>'
+                        ].join('')
+                    }
+
+                    for (i = 0, len = data.length; i < len; i++) {
+                        html += $.formateString(tpl.item, data[i])
+                    }
+
+                    dom.html(
+                        $.formateString(tpl.container, {content: html})
+                        )
+                        .appendTo('body')
+                }
+            }
             return function (v) {
-                V[v](0)
+                V[v]()
             }
         }()
 
         MVC.ctrl = function () {
             var M = MVC.model;
             var V = MVC.view
-            var C = {}
+            var C = {
+                initSlideBar: function () {
+                    V('createSlideBar');
+
+                    $('li', 'slidebar')
+                        .on('mouseover', function (e) {
+                            $(this).addClass('show')
+                        })
+                        .on('mouseout', function (e) {
+                            $(this).removeClass('show')
+                        });
+
+                    // 省略动画
+                }
+            }
+
+            C.initSlideBar()
         }()
     })
 </script>
