@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // M  model 模型  V view 视图 p presenter 管理器
+
+    ~(function (window) {
+        var MVP = function () {
+
+        }
+
+        // 数据层和 mvc 中的 m 相似
+        MVP.model = function () {
+            var M = {};
+            M.data = {
+                slideBar: [
+                    {
+                        text: 'm',
+                        icon: 'left meng.png',
+                        title: 'm title',
+                        content: 'm content',
+                        img: 'left_meng_img.png',
+                        href: 'www.xxx.com'
+                    },
+                    {
+                        text: 'd',
+                        icon: 'left c.png',
+                        title: 'd title',
+                        content: 'd content',
+                        img: 'left_d_img.png',
+                        href: 'www.xxxdd.com'
+                    }
+                ],
+                newsMod: [
+                    // ...
+                ]
+            } // 服务器中获取的数据
+            M.conf = {
+                slideBarCloseAnimate: false
+            } // 配置数据,页面加载时提供
+
+            return {
+                getData: function (m) {
+                    return M.data[m]
+                },
+                getConf: function (c) {
+                    return M.conf[c]
+                },
+                setData: function (m, v) {
+                    M.data[m] = v
+                    return v
+                },
+                setConf: function (c, v) {
+                    M.conf[c] = v
+                    return v
+                }
+            }
+        }
+
+        MVP.view = function () {
+
+            var REPLACEKEY = '__REPLACEKEY__';
+
+            // 获取完整元素模板
+            function getHTML(str, replacePos) {
+
+            }
+
+            /**
+             * 数组迭代器
+             * @param arr
+             * @param fn
+             */
+            function eachArray(arr, fn) {
+                for (var i = 0, len = arr.length; i < len; i++) {
+                    fn(i, arr[i], len)
+                }
+            }
+
+            /**
+             * 替换兄弟元素模板或子元素模板
+             * @param str
+             * @param rep
+             * @returns {void | string | *}
+             */
+            function formatItem(str, rep) {
+                return str.replace(new RegExp(REPLACEKEY, 'g'), rep)
+            }
+
+            return function (str) {
+                // 将字符串转化成 期望模板
+                var part = str
+                    .replace(/^\s+|\s+$/g, '')
+                    .replace(/^\s+(>)\s+/g, '$1')
+                    .split('>'),
+                    html = REPLACEKEY,
+                    item,
+                    nodeTpl;
+
+                eachArray(part, function (partIndex, partValue, partLen) {
+                    item = partValue.split('+');
+                    nodeTpl = REPLACEKEY;
+                    eachArray(item, function (itemIndex, itemValue, itemLen) {
+                        nodeTpl = formatItem(nodeTpl, getHTML(itemValue, itemIndex === itemLen - 1 ? (partIndex === partLen - 1 ? '' : 'in') : 'add'));
+                    });
+                    html = formatItem(html, nodeTpl)
+                })
+                return html
+            }
+        }()
+
+        MVP.presenter = function () {
+
+        }
+
+        MVP.init = function () {
+
+        }
+
+        window.MVP = MVP
+    })(window)
+
+</script>
+</body>
+</html>
