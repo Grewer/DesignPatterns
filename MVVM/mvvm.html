@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
 <body>
+<div class="first" data-bind="type:'slider',data:demo1"></div>
 <script>
     // mvvm model 模型  view 视图  viewModel 视图模型
 
@@ -60,13 +61,58 @@
                             progressText.innerHTML = parseFloat(w / width * 100).toFixed(2) + '%'
                         }
                     }
+
+                    bar.onmousedown = function () {
+                        document.onmousemove = function (event) {
+                            var e = event || window.event;
+                            var w = e.clientX - left
+                            setStyle(w < width ? (w > 0 ? w : 0) : width);
+                        }
+                        document.onselectstart = function () {
+                            return false;
+                        }
+
+                    }
+
+                    document.onmouseup = function () {
+                        document.onmousemove = null;
+                        document.onselectstart = null;
+                    }
                 }
             }
-        }
 
+            function getBindData(dom) {
+                var data = dom.getAttribute('data-bind');
+                return !!data && (new Function("return ({" + data + "})"))();
+            }
+
+            return function () {
+                var doms = document.body.getElementsByTagName('*'),
+                    ctx = null;
+                for (var i = 0; i < doms.length; i++) {
+                    ctx = getBindData(doms[i]);
+                    ctx.type && Method[ctx.type] && Method[ctx.type](doms[i], ctx);
+                }
+
+            }
+        }()
         window.VM = VM
     })()
 
+
+    var demo1 = {
+            position: 80,
+            totle: 200
+        },
+        demo2 = {
+            position: 20
+        },
+        demo3 = {
+            position: 50
+        };
+    window.onload = function () {
+        VM();
+    }
 </script>
 </body>
 </html>
